@@ -1,7 +1,7 @@
 module.exports = {
     // a function to run the logic for this role
     /** @param {Creep} creep */
-    run: function(creep) {
+    run: function (creep) {
         // if creep is bringing energy to a structure but has no energy left
         if (creep.memory.working == true && creep.carry.energy == 0) {
             // switch state
@@ -23,9 +23,11 @@ module.exports = {
                     // a property called filter which can be a function
                     // we use the arrow operator to define it
                     filter: (s) => (s.structureType == STRUCTURE_SPAWN
-                                 || s.structureType == STRUCTURE_EXTENSION
-                                 || s.structureType == STRUCTURE_TOWER)
-                                 && s.energy < s.energyCapacity
+                        || s.structureType == STRUCTURE_EXTENSION
+                        || s.structureType == STRUCTURE_TOWER
+                        || s.structureType == STRUCTURE_CONTAINER
+                        || s.structureType == STRUCTURE_STORAGE)
+                        && s.energy < s.energyCapacity
                 });
 
                 if (structure == undefined) {

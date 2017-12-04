@@ -3,7 +3,7 @@ var roleBuilder = require('role.builder');
 module.exports = {
     // a function to run the logic for this role
     /** @param {Creep} creep */
-    run: function(creep) {
+    run: function (creep) {
         // if creep is trying to repair something but has no energy left
         if (creep.memory.working == true && creep.carry.energy == 0) {
             // switch state
@@ -24,7 +24,9 @@ module.exports = {
                 // the second argument for findClosestByPath is an object which takes
                 // a property called filter which can be a function
                 // we use the arrow operator to define it
-                filter: (s) => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL
+                filter: (s) => s.hits < s.hitsMax
+                    && s.structureType != STRUCTURE_WALL
+                    && s.structureType != STRUCTURE_RAMPART
             });
 
             // if we find one
@@ -41,7 +43,7 @@ module.exports = {
                 roleBuilder.run(creep);
             }
         }
-            // if creep is supposed to get energy
+        // if creep is supposed to get energy
         else {
             creep.getEnergy(true, true);
         }
