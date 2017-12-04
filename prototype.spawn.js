@@ -6,16 +6,16 @@ const NORTH_EAST = 'E29E37';
 
 const MIN_NUMBER_OF_CREEPS = {
     harvester: 1,
-    upgrader: 1,
+    upgrader: 2,
     builder: 4,
-    repairer: 1,
+    repairer: 2,
     wallRepairer: 2,
     lorry: 1,
 };
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
-    'E29E36': 2,
-    'E29E37': 1
+    'E29N36': 2,
+    'E29N37': 1
 };
 // create a new function for StructureSpawn
 StructureSpawn.prototype.spawnCreepsIfNecessary =
@@ -40,20 +40,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         let name = undefined;
 
 
-        // if none of the above caused a spawn command check for LongDistanceHarvesters
-        /** @type {Object.<string, number>} */
-        let numberOfLongDistanceHarvesters = {};
-        if (name == undefined) {
-            // count the number of long distance harvesters globally
-            for (let roomName in MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS) {
-                numberOfLongDistanceHarvesters[roomName] = _.sum(Game.creeps, (c) =>
-                    c.memory.role == 'longDistanceHarvester' && c.memory.target == roomName);
 
-                if (numberOfLongDistanceHarvesters[roomName] < MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS[roomName]) {
-                    name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName, 0);
-                }
-            }
-        }
 
         // if no harvesters are left AND either no miners or no lorries are left
         //  create a backup creep
@@ -116,6 +103,23 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                         name = this.createCustomCreep(maxEnergy, role);
                     }
                     break;
+                }
+            }
+        }
+
+        // if none of the above caused a spawn command check for LongDistanceHarvesters
+        /** @type {Object.<string, number>} */
+        let numberOfLongDistanceHarvesters = {};
+        if (name == undefined) {
+            // count the number of long distance harvesters globally
+            for (let roomName in MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS) {
+                numberOfLongDistanceHarvesters[roomName] = _.sum(Game.creeps, (c) =>
+                    c.memory.role == 'longDistanceHarvester' && c.memory.target == roomName);
+
+                if (numberOfLongDistanceHarvesters[roomName] < MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS[roomName]) {
+                    name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName, 0);
+                    console.log(typeof room.name);
+                    console.log(typeof roomName);
                 }
             }
         }
