@@ -1,6 +1,5 @@
 // import modules
 require('prototype.creep');
-require('prototype.tower');
 require('prototype.spawn');
 
 const towers = require('structure.towers');
@@ -23,19 +22,9 @@ module.exports.loop = function() {
         Game.creeps[name].runRole();
     }
 
-
+    // for each room
     for(let room in Game.rooms)
         towers.defendMyRoom(room);
-    /*
-    // find all towers
-    var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
-    // for each tower
-    for (let tower of towers) {
-        // run tower logic
-        tower.defend();
-        //tower.repairStructures();
-    }
-    */
 
     // for each spawn
     for (let spawnName in Game.spawns) {
