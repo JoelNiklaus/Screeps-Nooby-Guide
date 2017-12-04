@@ -34,7 +34,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         /** @type {Object.<string, number>} */
         let numberOfCreeps = {};
         for (let role of listOfRoles) {
-            numberOfCreeps[role] = _.sum(creepsInRoom, (c) => c.memory.role == role);
+            numberOfCreeps[role] = _.sum(creepsInRoom, (c) => c.memory.role === role);
         }
         let maxEnergy = room.energyCapacityAvailable;
         let name = undefined;
@@ -44,10 +44,10 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
 
         // if no harvesters are left AND either no miners or no lorries are left
         //  create a backup creep
-        if (numberOfCreeps['harvester'] == 0 && numberOfCreeps['lorry'] == 0) {
+        if (numberOfCreeps['harvester'] === 0 && numberOfCreeps['lorry'] === 0) {
             // if there are still miners or enough energy in Storage left
             if (numberOfCreeps['miner'] > 0 ||
-                (room.storage != undefined && room.storage.store[RESOURCE_ENERGY] >= 150 + 550)) {
+                (room.storage !== undefined && room.storage.store[RESOURCE_ENERGY] >= 150 + 550)) {
                 // create a lorry
                 name = this.createLorry(150);
             }
@@ -64,11 +64,11 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             // iterate over all sources
             for (let source of sources) {
                 // if the source has no miner
-                if (!_.some(creepsInRoom, c => c.memory.role == 'miner' && c.memory.sourceId == source.id)) {
+                if (!_.some(creepsInRoom, c => c.memory.role === 'miner' && c.memory.sourceId === source.id)) {
                     // check whether or not the source has a container
                     /** @type {Array.StructureContainer} */
                     let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {
-                        filter: s => s.structureType == STRUCTURE_CONTAINER
+                        filter: s => s.structureType === STRUCTURE_CONTAINER
                     });
                     // if there is a container next to the source
                     if (containers.length > 0) {
@@ -81,14 +81,14 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         }
 
         // if none of the above caused a spawn command check for other roles
-        if (name == undefined) {
+        if (name === undefined) {
             for (let role of listOfRoles) {
                 // check for claim order
-                if (role == 'claimer' && this.memory.claimRoom != undefined) {
+                if (role === 'claimer' && this.memory.claimRoom !== undefined) {
                     // try to spawn a claimer
                     name = this.createClaimer(this.memory.claimRoom);
                     // if that worked
-                    if (name != undefined && _.isString(name)) {
+                    if (name !== undefined && _.isString(name)) {
                         // delete the claim order
                         delete this.memory.claimRoom;
                     }
@@ -96,7 +96,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                 }
                 // if no claim order was found, check other roles
                 else if (numberOfCreeps[role] < MIN_NUMBER_OF_CREEPS[role]) {
-                    if (role == 'lorry') {
+                    if (role === 'lorry') {
                         name = this.createLorry(150);
                     }
                     else {
@@ -110,11 +110,11 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         // if none of the above caused a spawn command check for LongDistanceHarvesters
         /** @type {Object.<string, number>} */
         let numberOfLongDistanceHarvesters = {};
-        if (name == undefined) {
+        if (name === undefined) {
             // count the number of long distance harvesters globally
             for (let roomName in MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS) {
                 numberOfLongDistanceHarvesters[roomName] = _.sum(Game.creeps, (c) =>
-                    c.memory.role == 'longDistanceHarvester' && c.memory.target == roomName);
+                    c.memory.role === 'longDistanceHarvester' && c.memory.target === roomName);
 
                 if (numberOfLongDistanceHarvesters[roomName] < MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS[roomName]) {
                     name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName, 0);
@@ -126,7 +126,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
 
 
         // print name to console if spawning was a success
-        if (name != undefined && _.isString(name)) {
+        if (name !== undefined && _.isString(name)) {
             console.log(this.name + " spawned new creep: " + name + " (" + Game.creeps[name].memory.role + ")");
             for (let role of listOfRoles) {
                 console.log(role + ": " + numberOfCreeps[role]);
@@ -141,10 +141,10 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
 StructureSpawn.prototype.createCustomCreep =
     function (energy, roleName) {
         // create a balanced body as big as possible with the given energy
-        var numberOfParts = Math.floor(energy / 200);
+        let numberOfParts = Math.floor(energy / 200);
         // make sure the creep is not too big (more than 50 parts)
         numberOfParts = Math.min(numberOfParts, Math.floor(50 / 3));
-        var body = [];
+        let body = [];
         for (let i = 0; i < numberOfParts; i++) {
             body.push(WORK);
         }
@@ -163,7 +163,7 @@ StructureSpawn.prototype.createCustomCreep =
 StructureSpawn.prototype.createLongDistanceHarvester =
     function (energy, numberOfWorkParts, home, target, sourceIndex) {
         // create a body with the specified number of WORK parts and one MOVE part per non-MOVE part
-        var body = [];
+        let body = [];
         for (let i = 0; i < numberOfWorkParts; i++) {
             body.push(WORK);
         }
@@ -171,7 +171,7 @@ StructureSpawn.prototype.createLongDistanceHarvester =
         // 150 = 100 (cost of WORK) + 50 (cost of MOVE)
         energy -= 150 * numberOfWorkParts;
 
-        var numberOfParts = Math.floor(energy / 100);
+        let numberOfParts = Math.floor(energy / 100);
         // make sure the creep is not too big (more than 50 parts)
         numberOfParts = Math.min(numberOfParts, Math.floor((50 - numberOfWorkParts * 2) / 2));
         for (let i = 0; i < numberOfParts; i++) {
@@ -208,10 +208,10 @@ StructureSpawn.prototype.createMiner =
 StructureSpawn.prototype.createLorry =
     function (energy) {
         // create a body with twice as many CARRY as MOVE parts
-        var numberOfParts = Math.floor(energy / 150);
+        let numberOfParts = Math.floor(energy / 150);
         // make sure the creep is not too big (more than 50 parts)
         numberOfParts = Math.min(numberOfParts, Math.floor(50 / 3));
-        var body = [];
+        let body = [];
         for (let i = 0; i < numberOfParts * 2; i++) {
             body.push(CARRY);
         }
