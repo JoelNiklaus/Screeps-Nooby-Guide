@@ -5,12 +5,11 @@ const EAST = 'E29E36';
 const NORTH_EAST = 'E29E37';
 
 const MIN_NUMBER_OF_CREEPS = {
-    harvester: 1,
     upgrader: 2,
-    builder: 4,
+    builder: 2,
     repairer: 2,
     wallRepairer: 2,
-    lorry: 1,
+    lorry: 2,
 };
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
@@ -64,7 +63,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             // iterate over all sources
             for (let source of sources) {
                 // if the source has no miner
-                if (!_.some(creepsInRoom, c => c.memory.role === 'miner' && c.memory.sourceId === source.id)) {
+                if (_.sum(creepsInRoom, c => c.memory.role === 'miner' && c.memory.sourceId === source.id) < 2) {
                     // check whether or not the source has a container
                     /** @type {Array.StructureContainer} */
                     let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {

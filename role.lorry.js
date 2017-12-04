@@ -3,7 +3,7 @@ const helper = require('helper');
 module.exports = {
     // a function to run the logic for this role
     /** @param {Creep} creep */
-    run: function(creep) {
+    run: function (creep) {
         // if creep is bringing energy to a structure but has no energy left
         if (creep.memory.working === true && creep.carry.energy === 0) {
             // switch state
@@ -19,19 +19,19 @@ module.exports = {
         if (creep.memory.working === true) {
             let structure = helper.findEnergyStructure(creep, STRUCTURE_SPAWN);
 
-            if(!structure){
+            if (!structure) {
                 structure = helper.findEnergyStructure(creep, STRUCTURE_EXTENSION);
             }
 
-            if(!structure){
+            if (!structure) {
                 structure = helper.findEnergyStructure(creep, STRUCTURE_TOWER);
             }
 
-            if(!structure){
+            if (!structure) {
                 structure = helper.findEnergyStructure(creep, STRUCTURE_CONTAINER);
             }
 
-            if(!structure){
+            if (!structure) {
                 structure = helper.findEnergyStructure(creep, STRUCTURE_STORAGE);
             }
 

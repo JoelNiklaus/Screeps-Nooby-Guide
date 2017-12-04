@@ -55,7 +55,7 @@ module.exports = {
                         && s.structureType === STRUCTURE_RAMPART
                 });
 
-                if (rampart) {
+                if (rampart && tower.energy > 100) {
                     tower.repair(rampart);
                     console.log("The tower is repairing ramparts.");
                 }
