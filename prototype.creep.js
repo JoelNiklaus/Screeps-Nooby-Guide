@@ -15,9 +15,9 @@ Creep.prototype.runRole =
         roles[this.memory.role].run(this);
     };
 
-/** @function 
-    @param {bool} useContainer
-    @param {bool} useSource */
+/** @function
+ @param {bool} useContainer
+ @param {bool} useSource */
 Creep.prototype.getEnergy =
     function (useContainer, useSource) {
         /** @type {StructureContainer} */
@@ -27,7 +27,7 @@ Creep.prototype.getEnergy =
             // find closest container
             container = this.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: s => (s.structureType == STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) &&
-                             s.store[RESOURCE_ENERGY] > 0
+                    s.store[RESOURCE_ENERGY] > 0
             });
             // if one was found
             if (container != undefined) {
