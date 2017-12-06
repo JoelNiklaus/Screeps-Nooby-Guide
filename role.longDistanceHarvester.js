@@ -25,15 +25,13 @@ module.exports = {
                     filter: (s) => (s.structureType === STRUCTURE_SPAWN
                         || s.structureType === STRUCTURE_EXTENSION
                         || s.structureType === STRUCTURE_TOWER
-                        || s.structureType === STRUCTURE_CONTAINER
-                        || s.structureType === STRUCTURE_STORAGE)
+                        || s.structureType === STRUCTURE_CONTAINER)
                         && s.energy < s.energyCapacity
                 });
 
-                /*
                 if (structure === undefined) {
                     structure = creep.room.storage;
-                }*/
+                }
 
                 // if we found one
                 if (structure !== undefined) {

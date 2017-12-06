@@ -27,10 +27,12 @@ module.exports = {
 
         // if creep is supposed to complete a constructionSite
         if (creep.memory.working === true) {
+
             // find closest constructionSite
             let constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+
             // if one is found
-            if (constructionSite !== undefined) {
+            if (constructionSite) {
                 // try to build, if the constructionSite is not in range
                 if (creep.build(constructionSite) === ERR_NOT_IN_RANGE) {
                     // move towards the constructionSite
