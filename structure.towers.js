@@ -4,8 +4,8 @@ module.exports = {
     defendMyRoom: function (myRoomName) {
 
         let hostiles = Game.rooms[myRoomName].find(FIND_HOSTILE_CREEPS);
-        let hostileHealers = Game.rooms[myRoomName].find(FIND_HOSTILE_CREEPS, {filter: (s) => (s.getActiveBodyparts(HEAL) > 0)});
-        let hostileAttackers = Game.rooms[myRoomName].find(FIND_HOSTILE_CREEPS, {filter: (s) => ( s.getActiveBodyparts(ATTACK) > 0 || s.getActiveBodyparts(RANGED_ATTACK) > 0)});
+        let hostileHealers = Game.rooms[myRoomName].find(FIND_HOSTILE_CREEPS, {filter: (c) => (c.getActiveBodyparts(HEAL) > 0)});
+        let hostileAttackers = Game.rooms[myRoomName].find(FIND_HOSTILE_CREEPS, {filter: (c) => ( c.getActiveBodyparts(ATTACK) > 0 || c.getActiveBodyparts(RANGED_ATTACK) > 0)});
         let towers = Game.rooms[myRoomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         let healerHit = false;
 
@@ -36,9 +36,8 @@ module.exports = {
         if (hostiles.length === 0) {
 
             //....first heal any damaged creeps
-            for (let name in Game.creeps) {
-                // get the creep object
-                let creep = Game.creeps[name];
+            let woundedCreeps = _.filter(Game.creeps, (c) => c.hits < c.hitsMax && c.room.name === myRoomName);
+            for (let creep of woundedCreeps) {
                 if (creep.hits < creep.hitsMax) {
                     towers.forEach(tower => tower.heal(creep));
                     console.log("Tower is healing Creeps.");

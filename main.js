@@ -4,6 +4,7 @@ require('prototype.spawn');
 
 const towers = require('structure.towers');
 
+const HOME = 'E28N36';
 
 module.exports.loop = function() {
 
@@ -23,12 +24,20 @@ module.exports.loop = function() {
     }
 
     // for each room
-    for(let room in Game.rooms)
-        towers.defendMyRoom(room);
+    //for(let room in Game.rooms)
+        towers.defendMyRoom(HOME);
 
     // for each spawn
     for (let spawnName in Game.spawns) {
         // run spawn logic
         Game.spawns[spawnName].spawnCreepsIfNecessary();
+        if (Game.spawns[spawnName].spawning) {
+            let spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
+            Game.spawns['Spawn1'].room.visual.text(
+                '🛠️' + spawningCreep.memory.role,
+                Game.spawns['Spawn1'].pos.x + 1,
+                Game.spawns['Spawn1'].pos.y,
+                {align: 'left', opacity: 0.8});
+        }
     }
 };
