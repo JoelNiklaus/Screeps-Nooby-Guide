@@ -7,7 +7,7 @@ module.exports = {
         // if target is defined and creep is not in target room
         if (creep.memory.target !== undefined && creep.room.name !== creep.memory.target) {
             // find exit to target room
-            var exit = creep.room.findExitTo(creep.memory.target);
+            let exit = creep.room.findExitTo(creep.memory.target);
             // move to exit
             creep.moveTo(creep.pos.findClosestByRange(exit));
             // return the function to not do anything else
@@ -28,7 +28,7 @@ module.exports = {
         // if creep is supposed to complete a constructionSite
         if (creep.memory.working === true) {
             // find closest constructionSite
-            var constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+            let constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             // if one is found
             if (constructionSite !== undefined) {
                 // try to build, if the constructionSite is not in range

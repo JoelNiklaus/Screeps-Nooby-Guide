@@ -1,8 +1,4 @@
-var listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer'];
-
-const HOME = 'E28N36';
-const EAST = 'E29E36';
-const NORTH_EAST = 'E29E37';
+const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer'];
 
 const MIN_NUMBER_OF_CREEPS = {
     upgrader: 2,
@@ -14,7 +10,10 @@ const MIN_NUMBER_OF_CREEPS = {
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
     'E29N36': 2,
-    'E29N37': 1
+    'E29N37': 1,
+    'E28N37': 1,
+    'E27N37': 1,
+    'E28N38': 1,
 };
 // create a new function for StructureSpawn
 StructureSpawn.prototype.spawnCreepsIfNecessary =
@@ -39,8 +38,6 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         let name = undefined;
 
 
-
-
         // if no harvesters are left AND either no miners or no lorries are left
         //  create a backup creep
         if (numberOfCreeps['harvester'] === 0 && numberOfCreeps['lorry'] === 0) {
@@ -63,7 +60,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             // iterate over all sources
             for (let source of sources) {
                 // if the source has no miner
-                if (_.sum(creepsInRoom, c => c.memory.role === 'miner' && c.memory.sourceId === source.id) < 2) {
+                if (!_.some(creepsInRoom, c => c.memory.role === 'miner' && c.memory.sourceId === source.id)) {
                     // check whether or not the source has a container
                     /** @type {Array.StructureContainer} */
                     let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {
@@ -96,7 +93,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                 // if no claim order was found, check other roles
                 else if (numberOfCreeps[role] < MIN_NUMBER_OF_CREEPS[role]) {
                     if (role === 'lorry') {
-                        name = this.createLorry(150);
+                        name = this.createLorry(maxEnergy);
                     }
                     else {
                         name = this.createCustomCreep(maxEnergy, role);

@@ -27,19 +27,9 @@ module.exports = {
                 structure = helper.findEnergyStructure(creep, STRUCTURE_TOWER);
             }
 
-            if(!structure){
-                structure = helper.findEnergyStructure(creep, STRUCTURE_CONTAINER);
-            }
-
-            if(!structure){
-                structure = helper.findEnergyStructure(creep, STRUCTURE_STORAGE);
-            }
-
-            /*
-            if (structure == undefined) {
+            if (structure === undefined) {
                 structure = creep.room.storage;
             }
-            */
 
             // if we found one
             if (structure !== undefined) {

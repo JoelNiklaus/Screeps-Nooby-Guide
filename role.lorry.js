@@ -27,19 +27,10 @@ module.exports = {
                 structure = helper.findEnergyStructure(creep, STRUCTURE_TOWER);
             }
 
-            if (!structure) {
-                structure = helper.findEnergyStructure(creep, STRUCTURE_CONTAINER);
-            }
-
-            if (!structure) {
-                structure = helper.findEnergyStructure(creep, STRUCTURE_STORAGE);
-            }
-
-            /*
-            if (structure == undefined) {
+            if (structure === undefined) {
                 structure = creep.room.storage;
             }
-            */
+
 
             // if we found one
             if (structure !== undefined) {
@@ -52,10 +43,17 @@ module.exports = {
         }
         // if creep is supposed to get energy
         else {
-            // find closest container
+            // find closest container which is at least half full
             let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+                filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > s.storeCapacity * 0.5
             });
+
+            // find closest container
+            if(container === undefined) {
+                container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+                });
+            }
 
             if (container === undefined) {
                 container = creep.room.storage;
