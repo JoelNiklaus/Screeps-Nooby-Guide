@@ -155,7 +155,7 @@ StructureSpawn.prototype.createCustomCreep =
         }
 
         // create creep with the created body and the given role
-        return this.createCreep(body, undefined, {role: roleName, working: false});
+        return this.createCreep(body, roleName + Game.time, {role: roleName, working: false});
     };
 
 // create a new function for StructureSpawn
@@ -181,7 +181,7 @@ StructureSpawn.prototype.createLongDistanceHarvester =
         }
 
         // create creep with the created body
-        return this.createCreep(body, undefined, {
+        return this.createCreep(body, "longDistanceHarvester" + Game.time, {
             role: 'longDistanceHarvester',
             home: home,
             target: target,
@@ -193,13 +193,13 @@ StructureSpawn.prototype.createLongDistanceHarvester =
 // create a new function for StructureSpawn
 StructureSpawn.prototype.createClaimer =
     function (target) {
-        return this.createCreep([CLAIM, MOVE], undefined, {role: 'claimer', target: target});
+        return this.createCreep([CLAIM, MOVE], "claimer" + Game.time, {role: 'claimer', target: target});
     };
 
 // create a new function for StructureSpawn
 StructureSpawn.prototype.createMiner =
     function (sourceId) {
-        return this.createCreep([WORK, WORK, WORK, WORK, WORK, MOVE], undefined,
+        return this.createCreep([WORK, WORK, WORK, WORK, WORK, MOVE], "miner" + Game.time,
             {role: 'miner', sourceId: sourceId});
     };
 
@@ -219,7 +219,7 @@ StructureSpawn.prototype.createLorry =
         }
 
         // create creep with the created body and the role 'lorry'
-        return this.createCreep(body, undefined, {role: 'lorry', working: false});
+        return this.createCreep(body, "lorry" + Game.time, {role: 'lorry', working: false});
     };
 
 // create a new function for StructureSpawn
