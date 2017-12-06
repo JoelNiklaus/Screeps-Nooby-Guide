@@ -4,16 +4,24 @@ const MIN_NUMBER_OF_CREEPS = {
     upgrader: 2,
     builder: 2,
     repairer: 2,
-    wallRepairer: 2,
+    wallRepairer: 1,
     lorry: 2,
 };
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
-    'E29N36': 2,
-    'E29N37': 1,
-    'E28N37': 1,
-    'E27N37': 1,
-    'E28N38': 1,
+    'E29N36': 4,
+    'E29N37': 2,
+    'E28N37': 0,
+    'E27N37': 0,
+    'E28N38': 0,
+};
+
+const MIN_NUMBER_OF_ATTACKERS = {
+    'E29N36': 0,
+    'E29N37': 0,
+    'E28N37': 0,
+    'E27N37': 0,
+    'E28N38': 0,
 };
 // create a new function for StructureSpawn
 StructureSpawn.prototype.spawnCreepsIfNecessary =
@@ -103,6 +111,21 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             }
         }
 
+        // if none of the above caused a spawn command check for Attackers
+        /** @type {Object.<string, number>} */
+        let numberOfAttackers = {};
+        if (name === undefined) {
+            // count the number of attackers globally
+            for (let roomName in MIN_NUMBER_OF_ATTACKERS) {
+                numberOfAttackers[roomName] = _.sum(Game.creeps, (c) =>
+                    c.memory.role === 'attacker' && c.memory.target === roomName);
+
+                if (numberOfAttackers[roomName] < MIN_NUMBER_OF_ATTACKERS[roomName]) {
+                    name = this.createAttacker(700, 3, room.name, roomName, 0);
+                }
+            }
+        }
+
         // if none of the above caused a spawn command check for LongDistanceHarvesters
         /** @type {Object.<string, number>} */
         let numberOfLongDistanceHarvesters = {};
@@ -114,8 +137,6 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
 
                 if (numberOfLongDistanceHarvesters[roomName] < MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS[roomName]) {
                     name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName, 0);
-                    console.log(typeof room.name);
-                    console.log(typeof roomName);
                 }
             }
         }
@@ -188,6 +209,30 @@ StructureSpawn.prototype.createLongDistanceHarvester =
     };
 
 // create a new function for StructureSpawn
+StructureSpawn.prototype.createAttacker =
+    function (energy, numberOfAttackParts, home, target) {
+        // create a body with the specified number of ATTACK parts and one MOVE part per non-MOVE part
+        let body = [];
+        // 130 = 80 (cost of WORK) + 50 (cost of MOVE)
+        energy -= 130 * numberOfAttackParts;
+
+        let numberOfParts = Math.floor(energy / 100);
+        // make sure the creep is not too big (more than 50 parts)
+        numberOfParts = Math.min(numberOfParts, Math.floor((50 - numberOfAttackParts * 2) / 2));
+        for (let i = 0; i < numberOfParts; i++) {
+            body.push(TOUGH);
+        }
+        for (let i = 0; i < numberOfAttackParts; i++) {
+            body.push(ATTACK);
+        }
+        for (let i = 0; i < numberOfParts + numberOfAttackParts; i++) {
+            body.push(MOVE);
+        }
+
+        return this.createCreep(body, "attacker" + Game.time, {role: 'attacker', home: home, target: target});
+    };
+
+// create a new function for StructureSpawn
 StructureSpawn.prototype.createClaimer =
     function (target) {
         return this.createCreep([CLAIM, MOVE], "claimer" + Game.time, {role: 'claimer', target: target});
@@ -225,6 +270,8 @@ StructureSpawn.prototype.placeClaimOrder =
         this.memory.claimRoom = roomName;
 
         console.log('Created Claim Order for Room ' + this.memory.claimRoom);
+
+        return true;
     };
 
 
