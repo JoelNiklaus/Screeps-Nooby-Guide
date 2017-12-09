@@ -4,6 +4,16 @@ module.exports = {
     // a function to run the logic for this role
     /** @param {Creep} creep */
     run: function (creep) {
+        // if target is defined and creep is not in target room
+        if (creep.memory.target !== undefined && creep.room.name !== creep.memory.target) {
+            // find exit to target room
+            let exit = creep.room.findExitTo(creep.memory.target);
+            // move to exit
+            creep.moveTo(creep.pos.findClosestByRange(exit));
+            // return the function to not do anything else
+            return;
+        }
+
         // if creep is trying to repair something but has no energy left
         if (creep.memory.working === true && creep.carry.energy === 0) {
             // switch state
@@ -30,7 +40,7 @@ module.exports = {
             });
 
             // if we find one
-            if (structure !== undefined) {
+            if (structure) {
                 // try to repair it, if it is out of range
                 if (creep.repair(structure) === ERR_NOT_IN_RANGE) {
                     // move towards it

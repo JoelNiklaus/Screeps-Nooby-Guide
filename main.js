@@ -4,8 +4,6 @@ require('prototype.spawn');
 
 const towers = require('structure.towers');
 
-const HOME = 'E28N36';
-
 module.exports.loop = function() {
 
     // check for memory entries of died creeps by iterating over Memory.creeps

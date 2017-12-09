@@ -1,5 +1,8 @@
 const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer'];
 
+const HOME_FIRST = 'E28N36';
+const HOME_SECOND = 'E28N37';
+
 const MIN_NUMBER_OF_CREEPS = {
     upgrader: 2,
     builder: 2,
@@ -136,7 +139,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                     c.memory.role === 'longDistanceHarvester' && c.memory.target === roomName);
 
                 if (numberOfLongDistanceHarvesters[roomName] < MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS[roomName]) {
-                    name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName, 0);
+                    name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName);
                 }
             }
         }
@@ -156,7 +159,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
 
 // create a new function for StructureSpawn
 StructureSpawn.prototype.createCustomCreep =
-    function (energy, roleName) {
+    function (energy, roleName, target) {
         // create a balanced body as big as possible with the given energy
         let numberOfParts = Math.floor(energy / 200);
         // make sure the creep is not too big (more than 50 parts)
@@ -173,12 +176,12 @@ StructureSpawn.prototype.createCustomCreep =
         }
 
         // create creep with the created body and the given role
-        return this.createCreep(body, roleName + Game.time, {role: roleName, working: false});
+        return this.createCreep(body, roleName + Game.time, {role: roleName, working: false, target: target});
     };
 
 // create a new function for StructureSpawn
 StructureSpawn.prototype.createLongDistanceHarvester =
-    function (energy, numberOfWorkParts, home, target, sourceIndex) {
+    function (energy, numberOfWorkParts, home, target) {
         // create a body with the specified number of WORK parts and one MOVE part per non-MOVE part
         let body = [];
         for (let i = 0; i < numberOfWorkParts; i++) {
@@ -203,7 +206,6 @@ StructureSpawn.prototype.createLongDistanceHarvester =
             role: 'longDistanceHarvester',
             home: home,
             target: target,
-            sourceIndex: sourceIndex,
             working: false
         });
     };

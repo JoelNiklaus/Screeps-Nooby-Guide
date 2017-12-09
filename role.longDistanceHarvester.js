@@ -34,7 +34,7 @@ module.exports = {
                 }
 
                 // if we found one
-                if (structure !== undefined) {
+                if (structure) {
                     // try to transfer energy, if it is not in range
                     if (creep.transfer(structure, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         // move towards it
@@ -52,10 +52,16 @@ module.exports = {
         }
         // if creep is supposed to harvest energy from source
         else {
+
             // if in target room
             if (creep.room.name === creep.memory.target) {
+                let controller = creep.room.controller.owner;
+                if (controller)
+                    console.log("Cannot mine in Room belonging to " + controller);
+
                 // find source
-                let source = creep.room.find(FIND_SOURCES)[creep.memory.sourceIndex];
+                let source = creep.pos.findClosestByPath(FIND_SOURCES);
+
 
                 // try to harvest energy, if the source is not in range
                 if (creep.harvest(source) === ERR_NOT_IN_RANGE) {

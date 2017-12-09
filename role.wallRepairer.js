@@ -46,14 +46,14 @@ module.exports = {
                 }
 
                 // if there is one
-                if (target !== undefined) {
+                if (target) {
                     // break the loop
                     break;
                 }
             }
 
             // if we find a wall that has to be repaired
-            if (target !== undefined) {
+            if (target) {
                 // try to repair it, if not in range
                 if (creep.repair(target) === ERR_NOT_IN_RANGE) {
                     // move towards it
