@@ -30,11 +30,11 @@ module.exports.loop = function() {
         // run spawn logic
         Game.spawns[spawnName].spawnCreepsIfNecessary();
         if (Game.spawns[spawnName].spawning) {
-            let spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
-            Game.spawns['Spawn1'].room.visual.text(
+            let spawningCreep = Game.creeps[Game.spawns[spawnName].spawning.name];
+            Game.spawns[spawnName].room.visual.text(
                 '🛠️' + spawningCreep.memory.role,
-                Game.spawns['Spawn1'].pos.x + 1,
-                Game.spawns['Spawn1'].pos.y,
+                Game.spawns[spawnName].pos.x + 1,
+                Game.spawns[spawnName].pos.y,
                 {align: 'left', opacity: 0.8});
         }
     }
