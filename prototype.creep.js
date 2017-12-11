@@ -60,3 +60,15 @@ Creep.prototype.exitRoom =
         // move to exit
         this.moveTo(this.pos.findClosestByRange(exit));
     };
+
+Creep.prototype.findEnergyStructure =
+    function (structureType) {
+        // find closest spawn, extension or tower which is not full
+        return this.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+            // the second argument for findClosestByPath is an object which takes
+            // a property called filter which can be a function
+            // we use the arrow operator to define it
+            filter: (s) => (s.structureType === structureType)
+                && s.energy < s.energyCapacity
+        });
+    };

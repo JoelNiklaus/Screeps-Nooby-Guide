@@ -1,5 +1,3 @@
-const helper = require('helper');
-
 module.exports = {
     // a function to run the logic for this role
     /** @param {Creep} creep */
@@ -17,14 +15,14 @@ module.exports = {
 
         // if creep is supposed to transfer energy to a structure
         if (creep.memory.working === true) {
-            let structure = helper.findEnergyStructure(creep, STRUCTURE_TOWER);
+            let structure = creep.findEnergyStructure(STRUCTURE_TOWER);
 
             if (!structure) {
-                structure = helper.findEnergyStructure(creep, STRUCTURE_EXTENSION);
+                structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
             }
 
             if (!structure) {
-                structure = helper.findEnergyStructure(creep, STRUCTURE_SPAWN);
+                structure = creep.findEnergyStructure(STRUCTURE_SPAWN);
             }
 
             if (structure === undefined) {
@@ -48,7 +46,7 @@ module.exports = {
             });
 
             // find closest container
-            if(container === undefined) {
+            if (container === undefined) {
                 container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
                 });
