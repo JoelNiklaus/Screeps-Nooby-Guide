@@ -8,10 +8,9 @@ module.exports = {
     run: function(creep) {
         // if creep is not instructed to work in another room
         if(!creep.memory.target){
-            // find exit to home room
-            let exit = creep.room.findExitTo(HOME);
-            // and move to exit
-            creep.moveTo(creep.pos.findClosestByRange(exit));
+            creep.exitRoom(creep.memory.target);
+            // return the function to not do anything else
+            return;
         }
 
         // if creep is trying to repair something but has no energy left

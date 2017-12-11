@@ -57,10 +57,7 @@ module.exports = {
             // if not in target room
             else {
                 if (isFullyHealed()) {
-                    // find exit to target room
-                    let exit = creep.room.findExitTo(creep.memory.target);
-                    // move to exit
-                    creep.moveTo(creep.pos.findClosestByRange(exit));
+                    creep.exitRoom(creep.memory.target);
                 }
             }
         }

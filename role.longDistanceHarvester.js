@@ -44,10 +44,7 @@ module.exports = {
             }
             // if not in home room...
             else {
-                // find exit to home room
-                let exit = creep.room.findExitTo(creep.memory.home);
-                // and move to exit
-                creep.moveTo(creep.pos.findClosestByRange(exit));
+                creep.exitRoom(creep.memory.home);
             }
         }
         // if creep is supposed to harvest energy from source
@@ -71,10 +68,7 @@ module.exports = {
             }
             // if not in target room
             else {
-                // find exit to target room
-                let exit = creep.room.findExitTo(creep.memory.target);
-                // move to exit
-                creep.moveTo(creep.pos.findClosestByRange(exit));
+                creep.exitRoom(creep.memory.target);
             }
         }
     }

@@ -4,10 +4,7 @@ module.exports = {
     run: function(creep) {
         // if target is defined and creep is not in target room
         if (creep.memory.target !== undefined && creep.room.name !== creep.memory.target) {
-            // find exit to target room
-            let exit = creep.room.findExitTo(creep.memory.target);
-            // move to exit
-            creep.moveTo(creep.pos.findClosestByRange(exit));
+            creep.exitRoom(creep.memory.target);
             // return the function to not do anything else
             return;
         }

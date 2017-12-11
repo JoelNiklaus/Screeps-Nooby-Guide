@@ -52,3 +52,11 @@ Creep.prototype.getEnergy =
             }
         }
     };
+
+Creep.prototype.exitRoom =
+    function (target) {
+        // find exit to target room
+        let exit = this.room.findExitTo(target);
+        // move to exit
+        this.moveTo(this.pos.findClosestByRange(exit));
+    };
