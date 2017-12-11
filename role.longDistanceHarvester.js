@@ -54,7 +54,7 @@ module.exports = {
             if (creep.room.name === creep.memory.target) {
                 let controller = creep.room.controller.owner;
                 if (controller)
-                    console.log("Cannot mine in Room belonging to " + controller);
+                    console.log("Cannot mine in Room belonging to " + controller.username);
 
                 // find source
                 let source = creep.pos.findClosestByPath(FIND_SOURCES);

@@ -26,6 +26,8 @@ module.exports = {
             if (!hostileCreepOrStructure)
                 hostileCreepOrStructure = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
             if (!hostileCreepOrStructure)
+                hostileCreepOrStructure = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, {filter: (s) => (s.structureType === STRUCTURE_TOWER)});
+            if (!hostileCreepOrStructure)
                 hostileCreepOrStructure = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES, {filter: (s) => (s.structureType !== STRUCTURE_CONTROLLER)});
 
             attackCreepOrStructure(hostileCreepOrStructure);

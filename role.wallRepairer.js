@@ -29,13 +29,13 @@ module.exports = {
             // find all wallsAndRamparts in the room
             let wallsAndRamparts = creep.room.find(FIND_STRUCTURES, {
                 filter: (s) => s.structureType === STRUCTURE_RAMPART
-                    //|| s.structureType === STRUCTURE_WALL
+                    || s.structureType === STRUCTURE_WALL
             });
 
             let target = undefined;
 
             // loop with increasing percentages
-            for (let percentage = 0.0001; percentage <= 0.001; percentage = percentage + 0.0001){
+            for (let percentage = 0.00001; percentage <= 0.0001; percentage = percentage + 0.00001){
                 // find a wall with less than percentage hits
                 for (let wall of wallsAndRamparts) {
                     if (wall.hits / wall.hitsMax < percentage) {
