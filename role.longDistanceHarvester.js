@@ -49,16 +49,14 @@ module.exports = {
         }
         // if creep is supposed to harvest energy from source
         else {
-
             // if in target room
             if (creep.room.name === creep.memory.target) {
-                let controller = creep.room.controller.owner;
-                if (controller)
-                    console.log("Cannot mine in Room belonging to " + controller.username);
+                let player = creep.room.controller.owner;
+                if (player && player !== WHOAMI)
+                    console.log("Cannot mine in Room belonging to " + player);
 
                 // find source
                 let source = creep.pos.findClosestByPath(FIND_SOURCES);
-
 
                 // try to harvest energy, if the source is not in range
                 if (creep.harvest(source) === ERR_NOT_IN_RANGE) {

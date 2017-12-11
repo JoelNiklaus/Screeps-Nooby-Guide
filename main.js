@@ -4,6 +4,8 @@ require('prototype.spawn');
 
 const towers = require('structure.towers');
 
+global.WHOAMI = _.find(Game.structures).owner;
+
 module.exports.loop = function() {
 
     // check for memory entries of died creeps by iterating over Memory.creeps

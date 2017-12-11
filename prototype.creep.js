@@ -72,3 +72,12 @@ Creep.prototype.findEnergyStructure =
                 && s.energy < s.energyCapacity
         });
     };
+
+Creep.prototype.repairStructure =
+    function (structure) {
+        // try to repair it, if it is out of range
+        if (this.repair(structure) === ERR_NOT_IN_RANGE) {
+            // move towards it
+            this.moveTo(structure);
+        }
+    };

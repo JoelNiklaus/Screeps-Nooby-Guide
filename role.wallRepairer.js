@@ -53,11 +53,7 @@ module.exports = {
 
             // if we find a wall that has to be repaired
             if (target) {
-                // try to repair it, if not in range
-                if (creep.repair(target) === ERR_NOT_IN_RANGE) {
-                    // move towards it
-                    creep.moveTo(target);
-                }
+                creep.repairStructure(target);
             }
             // if we can't fine one
             else {
