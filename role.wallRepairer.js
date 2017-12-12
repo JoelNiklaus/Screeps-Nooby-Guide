@@ -7,7 +7,7 @@ module.exports = {
     /** @param {Creep} creep */
     run: function(creep) {
         // if creep is not instructed to work in another room
-        if(!creep.memory.target){
+        if(creep.memory.target && creep.room.name !== creep.memory.target){
             creep.exitRoom(creep.memory.target);
             // return the function to not do anything else
             return;
