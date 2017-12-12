@@ -15,14 +15,14 @@ module.exports = {
 
         // if creep is supposed to transfer energy to a structure
         if (creep.memory.working === true) {
-            let structure = creep.findEnergyStructure(STRUCTURE_SPAWN);
-
-            if (!structure) {
-                structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
-            }
+            let structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
 
             if (!structure) {
                 structure = creep.findEnergyStructure(STRUCTURE_TOWER);
+            }
+
+            if (!structure) {
+                structure = creep.findEnergyStructure(STRUCTURE_SPAWN);
             }
 
             if (!structure) {

@@ -15,17 +15,17 @@ module.exports = {
 
         // if creep is supposed to transfer energy to a structure
         if (creep.memory.working === true) {
-            let structure = creep.findEnergyStructure(STRUCTURE_TOWER);
+            let structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
 
             if (!structure) {
-                structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
+                structure = creep.findEnergyStructure(STRUCTURE_TOWER);
             }
 
             if (!structure) {
                 structure = creep.findEnergyStructure(STRUCTURE_SPAWN);
             }
 
-            if (structure === undefined) {
+            if (!structure) {
                 structure = creep.room.storage;
             }
 
@@ -46,13 +46,13 @@ module.exports = {
             });
 
             // find closest container
-            if (container === undefined) {
+            if (!container) {
                 container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
                 });
             }
 
-            if (container === undefined) {
+            if (!container) {
                 container = creep.room.storage;
             }
 
