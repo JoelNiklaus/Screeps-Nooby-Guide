@@ -5,6 +5,8 @@ require('prototype.spawn');
 const towers = require('structure.towers');
 
 global.WHOAMI = _.find(Game.structures).owner;
+global.HOME_FIRST = 'E28N36';
+global.HOME_SECOND = 'E28N37';
 
 module.exports.loop = function() {
 
@@ -25,7 +27,8 @@ module.exports.loop = function() {
 
     // for each room
     //for(let room in Game.rooms)
-        towers.defendMyRoom(HOME);
+        towers.defendMyRoom(HOME_FIRST);
+        towers.defendMyRoom(HOME_SECOND);
 
     // for each spawn
     for (let spawnName in Game.spawns) {

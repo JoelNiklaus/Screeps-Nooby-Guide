@@ -8,7 +8,8 @@ var roles = {
     claimer: require('role.claimer'),
     miner: require('role.miner'),
     lorry: require('role.lorry'),
-    attacker: require('role.attacker')
+    attacker: require('role.attacker'),
+    scavenger: require('role.scavenger')
 };
 
 Creep.prototype.runRole =
@@ -21,6 +22,9 @@ Creep.prototype.runRole =
  @param {bool} useSource */
 Creep.prototype.getEnergy =
     function (useContainer, useSource) {
+
+        this.pickupEnergy();
+
         /** @type {StructureContainer} */
         let container;
         // if the Creep should look for containers
@@ -52,6 +56,16 @@ Creep.prototype.getEnergy =
             }
         }
     };
+
+Creep.prototype.pickupEnergy = function () {
+// Pick up energy if it lies somewhere
+    const target = this.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+    if (target) {
+        if (this.pickup(target) === ERR_NOT_IN_RANGE) {
+            this.moveTo(target);
+        }
+    }
+};
 
 Creep.prototype.exitRoom =
     function (target) {
