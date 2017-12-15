@@ -45,25 +45,38 @@ module.exports = {
             }
 
             for (let tower of towers) {
-                // repair ramparts which just have been built in order to keep them alive.
-                const percentage = 0.001;
-                // find a rampart with less than percentage hits
-                let rampart = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                    filter: (s) => s.hits < s.hitsMax
-                        && (s.hits / s.hitsMax) < percentage
-                        && s.structureType === STRUCTURE_RAMPART
+                let ramparts = tower.room.find(FIND_STRUCTURES, {
+                    filter: (s) => s.structureType === STRUCTURE_RAMPART
                 });
 
-                if (rampart && tower.energy > 100) {
-                    tower.repair(rampart);
+                let target = undefined;
+
+                // loop with increasing percentages
+                for (let percentage = 0.0001; percentage <= 0.1; percentage = percentage + 0.0001){
+                    // find a rampart with less than percentage hits
+                    for (let rampart of ramparts) {
+                        if (rampart.hits / rampart.hitsMax < percentage) {
+                            target = rampart;
+                            break;
+                        }
+                    }
+
+                    // if there is one
+                    if (target) {
+                        // break the loop
+                        break;
+                    }
+                }
+
+                if (target && tower.energy > 0.9 * tower.energyCapacity) {
+                    tower.repair(target);
                     console.log("The tower is repairing ramparts.");
                 }
 
 
-                //...repair Buildings! :) But ONLY until HALF the energy of the tower is gone.
-                //Because we don't want to be exposed if something shows up at our door :)
+                // ...repair Buildings! :) But ONLY until HALF the energy of the tower is gone.
+                // Because we don't want to be exposed if something shows up at our door :)
                 if (tower.energy > 0.5 * tower.energyCapacity) {
-
                     //Find the closest damaged Structure
                     let closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
                         filter: (s) => s.hits < s.hitsMax
