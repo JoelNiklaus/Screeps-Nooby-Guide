@@ -8,7 +8,7 @@ global.WHOAMI = _.find(Game.structures).owner;
 global.HOME_FIRST = 'E28N36';
 global.HOME_SECOND = 'E28N37';
 
-module.exports.loop = function() {
+module.exports.loop = function () {
 
     // check for memory entries of died creeps by iterating over Memory.creeps
     for (let name in Memory.creeps) {
@@ -26,9 +26,12 @@ module.exports.loop = function() {
     }
 
     // for each room
-    //for(let room in Game.rooms)
-        towers.defendMyRoom(HOME_FIRST);
-        towers.defendMyRoom(HOME_SECOND);
+    for (let roomName in Game.rooms) {
+        let room = Game.rooms[roomName];
+        // that I control
+        if (room.controller.owner && room.controller.owner === WHOAMI)
+            towers.defendMyRoom(roomName);
+    }
 
     // for each spawn
     for (let spawnName in Game.spawns) {
