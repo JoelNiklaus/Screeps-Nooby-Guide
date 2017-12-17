@@ -12,27 +12,26 @@ module.exports = {
         //Alternative to finding towers:
         //var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
 
-        //if there are hostileHealers - attack them
+        // if there are hostileHealers - attack them
         if (hostileHealers.length > 0 && healerHit === false) {
             towers.forEach(tower => tower.attack(hostileHealers[0]));
             healerHit = true;
             console.log("ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ");
         }
-
-        //if there are hostileAttackers - attack them
+        // if there are hostileAttackers - attack them
         else if (hostileAttackers.length > 0) {
             towers.forEach(tower => tower.attack(hostileAttackers[0]));
             healerHit = false;
             console.log("ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ");
         }
-        //if there are ANY Hostiles - attack them
+        // if there are ANY Hostiles - attack them
         else if (hostiles.length > 0) {
             towers.forEach(tower => tower.attack(hostiles[0]));
             healerHit = false;
             console.log("ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ALERT!!!! WE ARE UNDER ATTACK!!!!! ");
         }
 
-        //if there are no hostiles....
+        // if there are no hostiles....
         if (hostiles.length === 0) {
 
             //....first heal any damaged creeps

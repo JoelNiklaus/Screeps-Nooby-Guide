@@ -41,31 +41,34 @@ module.exports = {
         else {
             // if in target room
             if (creep.room.name === creep.memory.target) {
-                creep.pickupEnergy();
+                if (creep.resourcesLyingAround()) {
+                    creep.pickupResources();
+                }
+                else {
+                    // TODO get minerals before energy
+                    let structure = creep.room.storage;
 
-                // TODO get minerals before energy
-                let structure = creep.room.storage;
-
-                // if there is something stored in the structure
-                if (structure && _.some(structure.store)) {
-                    // withdraw all resources
-                    for (const resourceType in structure.store) {
-                        // try to withdraw energy or resources, if it is not in range
-                        if (creep.withdraw(structure, resourceType) === ERR_NOT_IN_RANGE) {
-                            // move towards it
-                            creep.moveTo(structure);
+                    // if there is something stored in the structure
+                    if (structure && _.some(structure.store)) {
+                        // withdraw all resources
+                        for (const resourceType in structure.store) {
+                            // try to withdraw energy or resources, if it is not in range
+                            if (creep.withdraw(structure, resourceType) === ERR_NOT_IN_RANGE) {
+                                // move towards it
+                                creep.moveTo(structure);
+                            }
                         }
                     }
-                }
 
-                // else start to dismantle buildings
-                else {
-                    //let structure = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
+                    // else start to dismantle buildings
+                    else {
+                        //let structure = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 
-                    // try to harvest energy by dismantling structure, if the structure is not in range
-                    if (creep.dismantle(structure) === ERR_NOT_IN_RANGE) {
-                        // move towards the structure
-                        creep.moveTo(structure);
+                        // try to harvest energy by dismantling structure, if the structure is not in range
+                        if (creep.dismantle(structure) === ERR_NOT_IN_RANGE) {
+                            // move towards the structure
+                            creep.moveTo(structure);
+                        }
                     }
                 }
             }

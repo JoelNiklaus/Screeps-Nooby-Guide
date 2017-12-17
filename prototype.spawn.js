@@ -6,6 +6,7 @@ const MIN_NUMBER_OF_CREEPS = {
     repairer: 1,
     wallRepairer: 1,
     lorry: 2,
+    mineralLorry: 1,
 };
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
@@ -24,7 +25,7 @@ const MIN_NUMBER_OF_SCAVENGERS = {
         'E27N39': 0,
     },
     'E28N37': {
-        'E27N39': 4,
+        'E27N39': 1,
     }
 };
 
@@ -48,6 +49,9 @@ const MIN_NUMBER_OF_ATTACKERS = {
         'E29N39': 0,
     },
 };
+
+const BIGGEST_CREEP_THRESHOLD = 1200;
+
 // create a new function for StructureSpawn
 StructureSpawn.prototype.spawnCreepsIfNecessary =
     function () {
@@ -133,11 +137,10 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                         if (role === 'lorry') {
                             continue;
                         }
-                        let biggestCreepThreshold = 1200;
-                        if (room.energyCapacityAvailable < biggestCreepThreshold)
+                        if (room.energyCapacityAvailable < BIGGEST_CREEP_THRESHOLD)
                             name = this.createCustomCreep(maxEnergy, role);
                         else
-                            name = this.createCustomCreep(biggestCreepThreshold, role);
+                            name = this.createCustomCreep(BIGGEST_CREEP_THRESHOLD, role);
                     }
                     break;
                 }
@@ -182,6 +185,11 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                             name = this.createMineralMiner(mineral.id);
                             break;
                         }
+                    }
+                    // if every mineral has a miner
+                    else {
+                        if (numberOfCreeps['mineralLorry'] < MIN_NUMBER_OF_CREEPS['mineralLorry'])
+                            name = this.createMineralLorry(BIGGEST_CREEP_THRESHOLD);
                     }
                 }
             }
@@ -358,23 +366,37 @@ StructureSpawn.prototype.createMineralMiner =
             {role: 'mineralMiner', mineralId: mineralId});
     };
 
+let makeLorryBody = function (energy) {
+// create a body with twice as many CARRY as MOVE parts
+    let numberOfParts = Math.floor(energy / 150);
+    // make sure the creep is not too big (more than 50 parts)
+    numberOfParts = Math.min(numberOfParts, Math.floor(50 / 3));
+    let body = [];
+    for (let i = 0; i < numberOfParts * 2; i++) {
+        body.push(CARRY);
+    }
+    for (let i = 0; i < numberOfParts; i++) {
+        body.push(MOVE);
+    }
+    return body;
+};
+
 // create a new function for StructureSpawn
 StructureSpawn.prototype.createLorry =
     function (energy) {
-        // create a body with twice as many CARRY as MOVE parts
-        let numberOfParts = Math.floor(energy / 150);
-        // make sure the creep is not too big (more than 50 parts)
-        numberOfParts = Math.min(numberOfParts, Math.floor(50 / 3));
-        let body = [];
-        for (let i = 0; i < numberOfParts * 2; i++) {
-            body.push(CARRY);
-        }
-        for (let i = 0; i < numberOfParts; i++) {
-            body.push(MOVE);
-        }
+        let body = makeLorryBody(energy);
 
         // create creep with the created body and the role 'lorry'
         return this.createCreep(body, "lorry" + Game.time, {role: 'lorry', working: false});
+    };
+
+// create a new function for StructureSpawn
+StructureSpawn.prototype.createMineralLorry =
+    function (energy) {
+        let body = makeLorryBody(energy);
+
+        // create creep with the created body and the role 'mineralLorry'
+        return this.createCreep(body, "mineralLorry" + Game.time, {role: 'mineralLorry', working: false});
     };
 
 // create a new function for StructureSpawn

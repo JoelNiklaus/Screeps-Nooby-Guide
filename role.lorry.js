@@ -7,7 +7,7 @@ module.exports = {
             // switch state
             creep.memory.working = false;
         }
-        // if creep is harvesting energy but is full
+        // if creep is withdrawing energy but is full
         else if (creep.memory.working === false && creep.carry.energy === creep.carryCapacity) {
             // switch state
             creep.memory.working = true;
@@ -26,6 +26,10 @@ module.exports = {
             }
 
             if (!structure) {
+                structure = creep.findEnergyStructure(STRUCTURE_LAB);
+            }
+
+            if (!structure) {
                 structure = creep.room.storage;
             }
 
@@ -40,28 +44,34 @@ module.exports = {
         }
         // if creep is supposed to get energy
         else {
-            // find closest container which is at least half full
-            let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > s.storeCapacity * 0.5
-            });
+            if (creep.resourcesLyingAround()) {
+                creep.pickupResources();
+            }
+            else {
 
-            // find closest container
-            if (!container) {
-                container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+                // find closest container which is at least half full
+                let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > s.storeCapacity * 0.5
                 });
-            }
 
-            if (!container) {
-                container = creep.room.storage;
-            }
+                // find closest container
+                if (!container) {
+                    container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                        filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
+                    });
+                }
 
-            // if one was found
-            if (container) {
-                // try to withdraw energy, if the container is not in range
-                if (creep.withdraw(container, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                    // move towards it
-                    creep.moveTo(container);
+                if (!container) {
+                    container = creep.room.storage;
+                }
+
+                // if one was found
+                if (container) {
+                    // try to withdraw energy, if the container is not in range
+                    if (creep.withdraw(container, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                        // move towards it
+                        creep.moveTo(container);
+                    }
                 }
             }
         }
