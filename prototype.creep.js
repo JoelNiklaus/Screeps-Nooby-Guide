@@ -1,4 +1,4 @@
-var roles = {
+const roles = {
     harvester: require('role.harvester'),
     upgrader: require('role.upgrader'),
     builder: require('role.builder'),
@@ -9,7 +9,8 @@ var roles = {
     miner: require('role.miner'),
     lorry: require('role.lorry'),
     attacker: require('role.attacker'),
-    scavenger: require('role.scavenger')
+    scavenger: require('role.scavenger'),
+    mineralMiner: require('role.mineralMiner')
 };
 
 Creep.prototype.runRole =

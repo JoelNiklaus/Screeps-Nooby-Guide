@@ -130,7 +130,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                         name = this.createLorry(550);
                     }
                     else {
-                        if (role === 'lorry'){
+                        if (role === 'lorry') {
                             continue;
                         }
                         let biggestCreepThreshold = 1200;
@@ -155,6 +155,34 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
 
                 if (numberOfAttackers[roomName] < MIN_NUMBER_OF_ATTACKERS[room.name][roomName]) {
                     name = this.createAttacker(maxEnergy, 3, room.name, roomName, 0);
+                }
+            }
+        }
+
+        // if none of the above caused a spawn command check for mineralMiners
+        if (name === undefined) {
+            // if we have the minimum amount of energy capacity needed for a miner and there is an extractor built
+            if (room.energyCapacityAvailable >= 1050 && room.find(FIND_STRUCTURES, {
+                    filter: s => s.structureType === STRUCTURE_EXTRACTOR
+                }).length >= 1) {
+                // check if all minerals have miners
+                let minerals = room.find(FIND_MINERALS);
+                // iterate over all minerals
+                for (let mineral of minerals) {
+                    // if the mineral has no miner
+                    if (!_.some(creepsInRoom, c => c.memory.role === 'mineralMiner' && c.memory.mineralId === mineral.id)) {
+                        // check whether or not the mineral has a container
+                        /** @type {Array.StructureContainer} */
+                        let containers = mineral.pos.findInRange(FIND_STRUCTURES, 1, {
+                            filter: s => s.structureType === STRUCTURE_CONTAINER
+                        });
+                        // if there is a container next to the mineral
+                        if (containers.length > 0) {
+                            // spawn a mineralMiner
+                            name = this.createMineralMiner(mineral.id);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -321,6 +349,13 @@ StructureSpawn.prototype.createMiner =
     function (sourceId) {
         return this.createCreep([WORK, WORK, WORK, WORK, WORK, MOVE], "miner" + Game.time,
             {role: 'miner', sourceId: sourceId});
+    };
+
+// create a new function for StructureSpawn
+StructureSpawn.prototype.createMineralMiner =
+    function (mineralId) {
+        return this.createCreep([WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, MOVE], "mineralMiner" + Game.time,
+            {role: 'mineralMiner', mineralId: mineralId});
     };
 
 // create a new function for StructureSpawn
