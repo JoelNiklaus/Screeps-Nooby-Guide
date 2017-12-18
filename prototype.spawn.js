@@ -1,4 +1,4 @@
-const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer'];
+const listOfRoles = ['harvester', 'lorry', 'claimer', 'upgrader', 'repairer', 'builder', 'wallRepairer', 'mineralLorry'];
 
 const MIN_NUMBER_OF_CREEPS = {
     upgrader: 1,
