@@ -133,8 +133,12 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                         // if we have at least one miner in this room
                         name = this.createLorry(550);
                     }
+                    else if (role === 'mineralLorry' && _.some(creepsInRoom, c => c.memory.role === 'mineralMiner')) {
+                        // if we have at least one mineralMiner in this room
+                        name = this.createMineralLorry(550);
+                    }
                     else {
-                        if (role === 'lorry') {
+                        if (role === 'lorry' || role === 'mineralLorry') {
                             continue;
                         }
                         if (room.energyCapacityAvailable < BIGGEST_CREEP_THRESHOLD)
@@ -170,10 +174,11 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                 }).length >= 1) {
                 // check if all minerals have miners
                 let minerals = room.find(FIND_MINERALS);
-                // iterate over all minerals
-                for (let mineral of minerals) {
+                if (minerals.length > 1) {
+                    let mineral = minerals[0];
                     // if the mineral has no miner
-                    if (!_.some(creepsInRoom, c => c.memory.role === 'mineralMiner' && c.memory.mineralId === mineral.id)) {
+                    if (mineral.mineralAmount > 0
+                        && !_.some(creepsInRoom, c => c.memory.role === 'mineralMiner' && c.memory.mineralId === mineral.id)) {
                         // check whether or not the mineral has a container
                         /** @type {Array.StructureContainer} */
                         let containers = mineral.pos.findInRange(FIND_STRUCTURES, 1, {
@@ -183,13 +188,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                         if (containers.length > 0) {
                             // spawn a mineralMiner
                             name = this.createMineralMiner(mineral.id);
-                            break;
                         }
-                    }
-                    // if every mineral has a miner
-                    else {
-                        if (numberOfCreeps['mineralLorry'] < MIN_NUMBER_OF_CREEPS['mineralLorry'])
-                            name = this.createMineralLorry(BIGGEST_CREEP_THRESHOLD);
                     }
                 }
             }

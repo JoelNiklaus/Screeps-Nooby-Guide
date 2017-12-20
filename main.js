@@ -29,7 +29,7 @@ module.exports.loop = function () {
     for (let roomName in Game.rooms) {
         let room = Game.rooms[roomName];
         // that I control
-        if (room.controller.owner && room.controller.owner === WHOAMI)
+        if (room.controller.owner && room.controller.owner.username === WHOAMI.username)
             towers.defendMyRoom(roomName);
     }
 
