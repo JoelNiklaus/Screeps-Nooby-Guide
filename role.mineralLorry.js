@@ -33,7 +33,6 @@ module.exports = {
                         creep.moveTo(structure);
                     }
                 }
-
             }
         }
         // if creep is supposed to get mineral
@@ -55,9 +54,11 @@ module.exports = {
                 if (container) {
                     // try to withdraw mineral, if the container is not in range
                     for (const resourceType in container.store) {
-                        if (creep.withdraw(container, resourceType) === ERR_NOT_IN_RANGE) {
-                            // move towards it
-                            creep.moveTo(container);
+                        if (resourceType !== RESOURCE_ENERGY) {
+                            if (creep.withdraw(container, resourceType) === ERR_NOT_IN_RANGE) {
+                                // move towards it
+                                creep.moveTo(container);
+                            }
                         }
                     }
                 }
