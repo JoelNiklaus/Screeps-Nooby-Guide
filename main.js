@@ -46,4 +46,21 @@ module.exports.loop = function () {
                 {align: 'left', opacity: 0.8});
         }
     }
-};
+
+    // Resource market
+    const amountToBuy = 2000, maxTransferEnergyCost = 500;
+    let room = HOME_FIRST;
+    const orders = Game.market.getAllOrders(
+        order => order.resourceType === RESOURCE_ZYNTHIUM &&
+            order.type === ORDER_SELL &&
+            Game.market.calcTransactionCost(amountToBuy, room, order.roomName) < maxTransferEnergyCost);
+    console.log(JSON.stringify(orders));
+
+    /*
+    for (let i = 0; i < orders.length; i++) {
+        Game.market.deal(orders[i].id, amountToBuy, room);
+        break;
+    }
+    */
+}
+;
