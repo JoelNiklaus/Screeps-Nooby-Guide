@@ -1,3 +1,5 @@
+const roleRepairer = require('role.repairer');
+
 module.exports = {
     // a function to run the logic for this role
     /** @param {Creep} creep */
@@ -44,6 +46,8 @@ module.exports = {
             }
             // if not in home room...
             else {
+                // go repairing the roads
+                roleRepairer.run(creep);
                 creep.exitRoom(creep.memory.home);
             }
         }
