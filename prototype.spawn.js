@@ -75,9 +75,14 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         // if no harvesters are left AND either no miners or no lorries are left
         //  create a backup creep
         if (numberOfCreeps['harvester'] === 0 && numberOfCreeps['lorry'] === 0) {
-            // if there are still miners or enough energy in Storage left
+            let containers = room.find(FIND_STRUCTURES, {
+                filter: s => s.structureType === STRUCTURE_CONTAINER
+                    && s.store.energy > 0
+            });
+            // if there are still miners or enough energy in Storage left or energy in containers left
             if (numberOfCreeps['miner'] > 0 ||
-                (room.storage !== undefined && room.storage.store[RESOURCE_ENERGY] >= 150 + 550)) {
+                (room.storage !== undefined && room.storage.store[RESOURCE_ENERGY] >= 150 + 550)
+                || containers.length > 0) {
                 // create a lorry
                 name = this.createLorry(150);
             }
@@ -90,7 +95,7 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
         // if no backup creep is required
         else {
             // if we have the minimum amount of energy capacity needed for a miner
-            if (room.energyCapacityAvailable >= 550) {
+            if (maxEnergy >= 550) {
                 // check if all sources have miners
                 let sources = room.find(FIND_SOURCES);
                 // iterate over all sources
@@ -113,13 +118,41 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             }
         }
 
+        // if none of the above caused a spawn command check for mineralMiners
+        if (name === undefined) {
+            // if we have the minimum amount of energy capacity needed for a miner and there is an extractor built
+            if (maxEnergy >= 1050 && room.find(FIND_STRUCTURES, {
+                    filter: s => s.structureType === STRUCTURE_EXTRACTOR
+                }).length >= 1) {
+                // check if all minerals have miners
+                let minerals = room.find(FIND_MINERALS);
+                if (minerals.length > 0) {
+                    let mineral = minerals[0];
+                    // if the mineral has no miner
+                    if (mineral.mineralAmount > 0
+                        && !_.some(creepsInRoom, c => c.memory.role === 'mineralMiner' && c.memory.mineralId === mineral.id)) {
+                        // check whether or not the mineral has a container
+                        /** @type {Array.StructureContainer} */
+                        let containers = mineral.pos.findInRange(FIND_STRUCTURES, 1, {
+                            filter: s => s.structureType === STRUCTURE_CONTAINER
+                        });
+                        // if there is a container next to the mineral
+                        if (containers.length > 0) {
+                            // spawn a mineralMiner
+                            name = this.createMineralMiner(mineral.id);
+                        }
+                    }
+                }
+            }
+        }
+
         // if none of the above caused a spawn command check for other roles
         if (name === undefined) {
             for (let role of listOfRoles) {
                 // check for claim order
                 if (role === 'claimer' && this.memory.claimRoom !== undefined) {
                     // try to spawn a claimer
-                    name = this.createClaimer(this.memory.claimRoom);
+                    name = this.createClaimer(this.memory.claimRoom, true);
                     // if that worked
                     if (name !== undefined && _.isString(name)) {
                         // delete the claim order
@@ -166,39 +199,11 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             }
         }
 
-        // if none of the above caused a spawn command check for mineralMiners
-        if (name === undefined) {
-            // if we have the minimum amount of energy capacity needed for a miner and there is an extractor built
-            if (room.energyCapacityAvailable >= 1050 && room.find(FIND_STRUCTURES, {
-                    filter: s => s.structureType === STRUCTURE_EXTRACTOR
-                }).length >= 1) {
-                // check if all minerals have miners
-                let minerals = room.find(FIND_MINERALS);
-                if (minerals.length > 1) {
-                    let mineral = minerals[0];
-                    // if the mineral has no miner
-                    if (mineral.mineralAmount > 0
-                        && !_.some(creepsInRoom, c => c.memory.role === 'mineralMiner' && c.memory.mineralId === mineral.id)) {
-                        // check whether or not the mineral has a container
-                        /** @type {Array.StructureContainer} */
-                        let containers = mineral.pos.findInRange(FIND_STRUCTURES, 1, {
-                            filter: s => s.structureType === STRUCTURE_CONTAINER
-                        });
-                        // if there is a container next to the mineral
-                        if (containers.length > 0) {
-                            // spawn a mineralMiner
-                            name = this.createMineralMiner(mineral.id);
-                        }
-                    }
-                }
-            }
-        }
-
         // if none of the above caused a spawn command check for Scavengers
         /** @type {Object.<string, number>} */
         let numberOfScavengers = {};
         if (name === undefined) {
-            // count the number of lscavengers globally
+            // count the number of scavengers globally
             for (let roomName in MIN_NUMBER_OF_SCAVENGERS[room.name]) {
                 numberOfScavengers[roomName] = _.sum(Game.creeps, (c) =>
                     c.memory.role === 'scavenger' && c.memory.target === roomName);
@@ -219,7 +224,16 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                     c.memory.role === 'longDistanceHarvester' && c.memory.target === roomName);
 
                 if (numberOfLongDistanceHarvesters[roomName] < MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS[room.name][roomName]) {
-                    name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName);
+                    if (room.energyCapacityAvailable < BIGGEST_CREEP_THRESHOLD)
+                        name = this.createLongDistanceHarvester(maxEnergy, 2, room.name, roomName);
+                    else
+                        name = this.createLongDistanceHarvester(BIGGEST_CREEP_THRESHOLD, 2, room.name, roomName);
+                } else {
+                    // if we do not yet have a claimer reserving the controller
+                    if (!_.some(Game.creeps, (c) =>
+                            c.memory.role === 'claimer' && c.memory.target === roomName && c.memory.reserve === true))
+                    // create claimer used for reserving the controller
+                        name = this.createClaimer(roomName, false);
                 }
             }
         }
@@ -347,8 +361,21 @@ StructureSpawn.prototype.createAttacker =
 
 // create a new function for StructureSpawn
 StructureSpawn.prototype.createClaimer =
-    function (target) {
-        return this.createCreep([CLAIM, MOVE], "claimer" + Game.time, {role: 'claimer', target: target});
+    function (target, claim) {
+        if (claim) {
+            return this.createCreep([CLAIM, MOVE], "claimer" + Game.time, {
+                role: 'claimer',
+                target: target,
+                claim: true
+            });
+        } else {
+            return this.createCreep([CLAIM, CLAIM, MOVE, MOVE], "claimer" + Game.time, {
+                role: 'claimer',
+                target: target,
+                reserve: true
+            });
+        }
+
     };
 
 // create a new function for StructureSpawn
