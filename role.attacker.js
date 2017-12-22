@@ -3,8 +3,16 @@ module.exports = {
     run: function (creep) {
         let attackCreepOrStructure = function (hostile) {
             if (hostile) {
-                if (creep.attack(hostile) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(hostile);
+                creep.moveTo(hostile);
+                if (creep.pos.isNearTo(hostile)) {
+                    creep.attack(hostile);
+                }
+                else {
+                    if (_.some(creep.body, p => p.type === RANGED_ATTACK)) {
+                        if (creep.rangedAttack(hostile) === ERR_NOT_IN_RANGE) {
+                            creep.moveTo(hostile);
+                        }
+                    }
                 }
             }
         };
