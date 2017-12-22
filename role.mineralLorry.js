@@ -37,8 +37,9 @@ module.exports = {
         }
         // if creep is supposed to get mineral
         else {
-            if (creep.resourcesLyingAround()) {
-                creep.pickupResources();
+            let resource = creep.resourceLyingAround();
+            if (resource && resource.amount > 0) {
+                creep.pickupResources(resource);
             }
             else {
                 // find closest container

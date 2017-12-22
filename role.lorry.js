@@ -13,6 +13,7 @@ module.exports = {
             creep.memory.working = true;
         }
 
+
         // if creep is supposed to transfer energy to a structure
         if (creep.memory.working === true) {
             let structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
@@ -44,21 +45,32 @@ module.exports = {
         }
         // if creep is supposed to get energy
         else {
-            if (creep.resourcesLyingAround()) {
-                creep.pickupResources();
+            let energy = creep.energyLyingAround();
+            if (energy && energy.amount > 0) {
+                creep.pickupResources(energy);
             }
             else {
+                // find closest container which is already full
+                let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] === s.storeCapacity
+                });
 
                 // find closest container which is at least half full
-                let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > s.storeCapacity * 0.5
-                });
+                if (!container) {
+                    container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                        filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > s.storeCapacity * 0.5
+                    });
+                }
 
                 // find closest container
                 if (!container) {
                     container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                         filter: s => s.structureType === STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0
                     });
+                }
+
+                if (!container) {
+                    container = creep.room.terminal;
                 }
 
                 if (!container) {
@@ -74,6 +86,9 @@ module.exports = {
                     }
                 }
             }
+
         }
+
+
     }
 };

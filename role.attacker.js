@@ -1,15 +1,6 @@
 module.exports = {
     // a function to run the logic for this role
     run: function (creep) {
-
-        let isWounded = function () {
-            return creep.hits / creep.hitsMax < 0.5;
-        };
-
-        let isFullyHealed = function () {
-            return creep.hits === creep.hitsMax;
-        };
-
         let attackCreepOrStructure = function (hostile) {
             if (hostile) {
                 if (creep.attack(hostile) === ERR_NOT_IN_RANGE) {
@@ -17,6 +8,7 @@ module.exports = {
                 }
             }
         };
+
         let attackBehaviour = function () {
             let hostileCreepOrStructure = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: (c) => (c.getActiveBodyparts(HEAL) > 0)});
             if (!hostileCreepOrStructure)
@@ -33,9 +25,8 @@ module.exports = {
             attackCreepOrStructure(hostileCreepOrStructure);
         };
 
-
         // if creep is is wounded
-        if (isWounded()) {
+        if (creep.isWounded()) {
             // if in home room
             if (creep.room.name === creep.memory.home) {
                 // move to rally point
@@ -55,7 +46,7 @@ module.exports = {
             }
             // if not in target room
             else {
-                if (isFullyHealed()) {
+                if (creep.isFullyHealed()) {
                     creep.exitRoom(creep.memory.target);
                 }
             }

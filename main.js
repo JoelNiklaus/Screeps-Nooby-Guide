@@ -56,11 +56,10 @@ module.exports.loop = function () {
             Game.market.calcTransactionCost(amountToBuy, room, order.roomName) < maxTransferEnergyCost);
     console.log(JSON.stringify(orders));
 
-    /*
     for (let i = 0; i < orders.length; i++) {
         Game.market.deal(orders[i].id, amountToBuy, room);
         break;
     }
-    */
+    console.log("Credits: " + Game.market.credits);
 }
 ;

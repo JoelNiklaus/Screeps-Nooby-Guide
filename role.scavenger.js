@@ -41,8 +41,9 @@ module.exports = {
         else {
             // if in target room
             if (creep.room.name === creep.memory.target) {
-                if (creep.resourcesLyingAround()) {
-                    creep.pickupResources();
+                let resource = creep.resourceLyingAround();
+                if (resource && resource.amount > 0) {
+                    creep.pickupResources(resource);
                 }
                 else {
                     // TODO get minerals before energy

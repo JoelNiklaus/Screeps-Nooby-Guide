@@ -24,8 +24,9 @@ Creep.prototype.runRole =
  @param {bool} useSource */
 Creep.prototype.getEnergy =
     function (useContainer, useSource) {
-        if (this.resourcesLyingAround()) {
-            this.pickupResources();
+        let energy = this.energyLyingAround();
+        if (energy && energy.amount > 0) {
+            this.pickupResources(energy);
         }
         else {
             /** @type {StructureContainer} */
@@ -34,7 +35,9 @@ Creep.prototype.getEnergy =
             if (useContainer) {
                 // find closest container
                 container = this.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: s => (s.structureType === STRUCTURE_CONTAINER || s.structureType === STRUCTURE_STORAGE) &&
+                    filter: s => (s.structureType === STRUCTURE_CONTAINER
+                        || s.structureType === STRUCTURE_STORAGE
+                        || s.structureType === STRUCTURE_TERMINAL) &&
                         s.store[RESOURCE_ENERGY] > 0
                 });
 
@@ -61,21 +64,21 @@ Creep.prototype.getEnergy =
         }
     };
 
-Creep.prototype.pickupResources = function () {
-    // Pick up resources lying around somewhere
-    const target = this.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
-    if (target) {
-        if (this.pickup(target) === ERR_NOT_IN_RANGE) {
-            this.moveTo(target);
-        }
+Creep.prototype.pickupResources = function (resource) {
+    // Pick up resource lying around somewhere
+    if (this.pickup(resource) === ERR_NOT_IN_RANGE) {
+        this.moveTo(resource);
     }
 };
 
-Creep.prototype.resourcesLyingAround = function () {
-    // Pick up resources lying around somewhere
-    const target = this.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
-    return !!target;
+Creep.prototype.energyLyingAround = function () {
+    // get energy lying around somewhere
+    return this.pos.findClosestByRange(FIND_DROPPED_RESOURCES, r => r.resourceType === RESOURCE_ENERGY);
+};
 
+Creep.prototype.resourceLyingAround = function () {
+    // get resource lying around somewhere
+    return this.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
 };
 
 
@@ -107,3 +110,11 @@ Creep.prototype.repairStructure =
             this.moveTo(structure);
         }
     };
+
+Creep.prototype.isFullyHealed = function () {
+    return this.hits === this.hitsMax;
+};
+
+Creep.prototype.isWounded = function () {
+    return this.hits / this.hitsMax < 0.5;
+};

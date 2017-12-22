@@ -11,12 +11,12 @@ const MIN_NUMBER_OF_CREEPS = {
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
     'E28N36': {
-        'E29N36': 2,
-        'E29N37': 1,
+        'E29N36': 8,
+        'E29N37': 4,
     },
     'E28N37': {
-        'E27N37': 2,
-        'E28N38': 1,
+        'E28N38': 4,
+        'E29N37': 4,
     }
 };
 
@@ -25,7 +25,7 @@ const MIN_NUMBER_OF_SCAVENGERS = {
         'E27N39': 0,
     },
     'E28N37': {
-        'E27N39': 1,
+        'E27N39': 0,
     }
 };
 
@@ -82,7 +82,8 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             // if there are still miners or enough energy in Storage left or energy in containers left
             if (numberOfCreeps['miner'] > 0 ||
                 (room.storage !== undefined && room.storage.store[RESOURCE_ENERGY] >= 150 + 550)
-                || containers.length > 0) {
+            //|| containers.length > 0
+            ) {
                 // create a lorry
                 name = this.createLorry(150);
             }
@@ -238,6 +239,11 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             }
         }
 
+        // If everything is full
+        if (name === undefined && room.energyAvailable === room.energyCapacityAvailable) {
+            // spawn new upgrader
+            name = this.createCustomCreep(maxEnergy, 'upgrader');
+        }
 
         // print name to console if spawning was a success
         if (name !== undefined && _.isString(name)) {

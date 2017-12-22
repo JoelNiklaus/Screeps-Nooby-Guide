@@ -1,3 +1,4 @@
+const roleBuilder = require('role.builder');
 const roleRepairer = require('role.repairer');
 
 module.exports = {
@@ -46,27 +47,41 @@ module.exports = {
             }
             // if not in home room...
             else {
+                // go build roads
+                if (creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES)) {
+                    roleBuilder.run(creep);
+                }
                 // go repairing the roads
-                roleRepairer.run(creep);
-                creep.exitRoom(creep.memory.home);
+                else if (creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax * 0.9})) {
+                    //roleRepairer.run(creep);
+                }
+                else {
+                    creep.exitRoom(creep.memory.home);
+                }
             }
         }
         // if creep is supposed to harvest energy from source
         else {
             // if in target room
             if (creep.room.name === creep.memory.target) {
-                let player = creep.room.controller.owner;
-                if (player && player !== WHOAMI)
-                    console.log("Cannot mine in Room belonging to " + player);
+                let energy = creep.energyLyingAround();
+                if (energy && energy.amount > 0) {
+                    creep.pickupResources(energy);
+                } else {
+                    let player = creep.room.controller.owner;
+                    if (player && player !== WHOAMI)
+                        console.log("Cannot mine in Room belonging to " + player);
 
-                // find source
-                let source = creep.pos.findClosestByPath(FIND_SOURCES);
+                    // find source
+                    let source = creep.pos.findClosestByPath(FIND_SOURCES);
 
-                // try to harvest energy, if the source is not in range
-                if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
-                    // move towards the source
-                    creep.moveTo(source);
+                    // try to harvest energy, if the source is not in range
+                    if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
+                        // move towards the source
+                        creep.moveTo(source);
+                    }
                 }
+
             }
             // if not in target room
             else {
