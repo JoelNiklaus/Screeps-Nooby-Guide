@@ -52,8 +52,11 @@ module.exports = {
                     roleBuilder.run(creep);
                 }
                 // go repairing the roads
-                else if (creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (s) => s.hits < s.hitsMax * 0.9})) {
-                    //roleRepairer.run(creep);
+                else if (creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (s) =>
+                        s.hits < s.hitsMax * 0.9
+                        && s.structureType === STRUCTURE_ROAD
+                })) {
+                    roleRepairer.run(creep);
                 }
                 else {
                     creep.exitRoom(creep.memory.home);

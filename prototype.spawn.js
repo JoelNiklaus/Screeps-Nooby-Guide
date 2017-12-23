@@ -11,12 +11,12 @@ const MIN_NUMBER_OF_CREEPS = {
 
 const MIN_NUMBER_OF_LONG_DISTANCE_HARVESTERS = {
     'E28N36': {
-        'E29N36': 8,
-        'E29N37': 4,
+        'E29N36': 6,
+        'E29N37': 3,
     },
     'E28N37': {
-        'E28N38': 4,
-        'E29N37': 4,
+        'E28N38': 3,
+        'E29N37': 3,
     }
 };
 
