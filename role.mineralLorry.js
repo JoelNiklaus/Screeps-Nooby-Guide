@@ -30,7 +30,7 @@ module.exports = {
                 for (const resourceType in creep.carry) {
                     if (creep.transfer(structure, resourceType) === ERR_NOT_IN_RANGE) {
                         // move towards it
-                        creep.moveTo(structure);
+                        creep.moveTo(structure, {reusePath: 50});
                     }
                 }
             }
@@ -58,7 +58,7 @@ module.exports = {
                         if (resourceType !== RESOURCE_ENERGY) {
                             if (creep.withdraw(container, resourceType) === ERR_NOT_IN_RANGE) {
                                 // move towards it
-                                creep.moveTo(container);
+                                creep.moveTo(container, {reusePath: 50});
                             }
                         }
                     }

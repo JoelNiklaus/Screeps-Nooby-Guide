@@ -41,7 +41,7 @@ module.exports = {
                     // try to transfer energy, if it is not in range
                     if (creep.transfer(structure, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                         // move towards it
-                        creep.moveTo(structure);
+                        creep.moveTo(structure, {reusePath: 50});
                     }
                 }
             }
@@ -52,10 +52,11 @@ module.exports = {
                     roleBuilder.run(creep);
                 }
                 // go repairing the roads
-                else if (creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: (s) =>
-                        s.hits < s.hitsMax * 0.9
-                        && s.structureType === STRUCTURE_ROAD
-                })) {
+                else if (creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                        filter: (s) =>
+                            s.hits < s.hitsMax * 0.8
+                            && (s.structureType === STRUCTURE_ROAD || s.structureType === STRUCTURE_CONTAINER)
+                    })) {
                     roleRepairer.run(creep);
                 }
                 else {
@@ -81,7 +82,7 @@ module.exports = {
                     // try to harvest energy, if the source is not in range
                     if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
                         // move towards the source
-                        creep.moveTo(source);
+                        creep.moveTo(source, {reusePath: 50});
                     }
                 }
 
