@@ -48,18 +48,17 @@ module.exports.loop = function () {
     }
 
     // Resource market
-    const amountToBuy = 2000, maxTransferEnergyCost = 500;
-    let room = HOME_FIRST;
-    const orders = Game.market.getAllOrders(
-        order => order.resourceType === RESOURCE_ZYNTHIUM &&
-            order.type === ORDER_SELL &&
-            Game.market.calcTransactionCost(amountToBuy, room, order.roomName) < maxTransferEnergyCost);
-    console.log(JSON.stringify(orders));
+    let deal = function (amountToBuy, maxTransferEnergyCost, room, resourceType) {
+        const orders = Game.market.getAllOrders(
+            order => order.resourceType === resourceType && order.type === ORDER_BUY &&
+                Game.market.calcTransactionCost(amountToBuy, room, order.roomName) < maxTransferEnergyCost);
 
-    for (let i = 0; i < orders.length; i++) {
-        Game.market.deal(orders[i].id, amountToBuy, room);
-        break;
-    }
-    console.log("Credits: " + Game.market.credits);
+        if(orders.length > 0)
+            Game.market.deal(orders[0].id, amountToBuy, room);
+        console.log(JSON.stringify(orders));
+        console.log("Credits: " + Game.market.credits);
+    };
+    deal(2000, 500, HOME_FIRST, RESOURCE_ZYNTHIUM);
+    deal(2000, 500, HOME_SECOND, RESOURCE_OXYGEN);
 }
 ;

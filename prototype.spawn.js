@@ -232,7 +232,9 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
                 } else {
                     // if we do not yet have a claimer reserving the controller
                     if (!_.some(Game.creeps, (c) =>
-                            c.memory.role === 'claimer' && c.memory.target === roomName && c.memory.reserve === true))
+                            c.memory.role === 'claimer'
+                            && c.memory.target === roomName
+                            && c.memory.reserve === true))
                     // create claimer used for reserving the controller
                         name = this.createClaimer(roomName, false);
                 }
