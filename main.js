@@ -8,6 +8,8 @@ global.WHOAMI = _.find(Game.structures).owner;
 global.HOME_FIRST = 'E28N36';
 global.HOME_SECOND = 'E28N37';
 
+global.ROOMS = ['E28N36', 'E28N37', 'E27N37'];
+
 module.exports.loop = function () {
 
     // check for memory entries of died creeps by iterating over Memory.creeps
@@ -31,6 +33,15 @@ module.exports.loop = function () {
         // that I control
         if (room.controller.owner && room.controller.owner.username === WHOAMI.username)
             towers.defendMyRoom(roomName);
+        if (room.terminal) {
+            for (const resourceType in room.terminal.store) {
+                let otherRoom = _.filter(Game.rooms, r => r.terminal && r.name !== roomName && !r.terminal.store[resourceType])[0];
+                console.log(resourceType + otherRoom);
+                if (room.terminal.store[resourceType] > 50000) {
+                    room.terminal.send(resourceType, room.terminal.store[resourceType] - 50000, otherRoom);
+                }
+            }
+        }
     }
 
     // for each spawn
@@ -48,17 +59,18 @@ module.exports.loop = function () {
     }
 
     // Resource market
-    let deal = function (amountToBuy, maxTransferEnergyCost, room, resourceType) {
+    let deal = function (amountToBuy, maxTransferEnergyCost, price, room, resourceType) {
         const orders = Game.market.getAllOrders(
-            order => order.resourceType === resourceType && order.type === ORDER_BUY &&
+            order => order.resourceType === resourceType && order.type === ORDER_BUY && order.price >= price &&
                 Game.market.calcTransactionCost(amountToBuy, room, order.roomName) < maxTransferEnergyCost);
 
-        if(orders.length > 0)
+        if (orders.length > 0)
             Game.market.deal(orders[0].id, amountToBuy, room);
         console.log(JSON.stringify(orders));
-        console.log("Credits: " + Game.market.credits);
     };
-    deal(2000, 500, HOME_FIRST, RESOURCE_ZYNTHIUM);
-    deal(2000, 500, HOME_SECOND, RESOURCE_OXYGEN);
+    deal(2000, 700, 0.13, HOME_FIRST, RESOURCE_ZYNTHIUM);
+    deal(2000, 700, 0.09, HOME_SECOND, RESOURCE_OXYGEN);
+
+
 }
 ;

@@ -16,10 +16,16 @@ module.exports = {
 
         // if creep is supposed to transfer energy to a structure
         if (creep.memory.working === true) {
-            let structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
+
+            let structure = creep.findEnergyStructure(STRUCTURE_TOWER);
 
             if (!structure) {
-                structure = creep.findEnergyStructure(STRUCTURE_TOWER);
+                structure = creep.findEnergyStructure(STRUCTURE_EXTENSION);
+            }
+
+            if (!structure) {
+                if (creep.room.terminal && (!creep.room.terminal.store[RESOURCE_ENERGY] || creep.room.terminal.store[RESOURCE_ENERGY] < 10000))
+                    structure = creep.room.terminal;
             }
 
             if (!structure) {
@@ -28,10 +34,6 @@ module.exports = {
 
             if (!structure) {
                 structure = creep.findEnergyStructure(STRUCTURE_LAB);
-            }
-
-            if (!structure) {
-                structure = creep.room.terminal;
             }
 
             if (!structure) {
@@ -74,11 +76,11 @@ module.exports = {
                 }
 
                 if (!container) {
-                    container = creep.room.terminal;
+                    container = creep.room.storage;
                 }
 
                 if (!container) {
-                    container = creep.room.storage;
+                    container = creep.room.terminal;
                 }
 
                 // if one was found

@@ -50,7 +50,7 @@ const MIN_NUMBER_OF_ATTACKERS = {
     },
 };
 
-const BIGGEST_CREEP_THRESHOLD = 1200;
+const BIGGEST_CREEP_THRESHOLD = 1400;
 
 // create a new function for StructureSpawn
 StructureSpawn.prototype.spawnCreepsIfNecessary =
@@ -253,9 +253,22 @@ StructureSpawn.prototype.spawnCreepsIfNecessary =
             for (let role of listOfRoles) {
                 console.log(role + ": " + numberOfCreeps[role]);
             }
-            for (let roomName in numberOfLongDistanceHarvesters) {
-                console.log("LongDistanceHarvester" + roomName + ": " + numberOfLongDistanceHarvesters[roomName]);
+            if (numberOfAttackers) {
+                for (let roomName in numberOfAttackers) {
+                    console.log("Attacker" + roomName + ": " + numberOfAttackers[roomName]);
+                }
             }
+            if (numberOfScavengers) {
+                for (let roomName in numberOfScavengers) {
+                    console.log("Scavenger" + roomName + ": " + numberOfScavengers[roomName]);
+                }
+            }
+            if (numberOfLongDistanceHarvesters) {
+                for (let roomName in numberOfLongDistanceHarvesters) {
+                    console.log("LongDistanceHarvester" + roomName + ": " + numberOfLongDistanceHarvesters[roomName]);
+                }
+            }
+
         }
     };
 
